@@ -29,8 +29,8 @@ namespace SongMelodey.Controllers
 
             var song = await _db.Songs.FindAsync(dto.SongId);
             if (song == null) return NotFound("Song not found.");
-
             var res = await _trimService.TrimFromSongAsync(dto.SongId, dto.StartMs, dto.EndMs, ct);
+
             if (!res.Success) return StatusCode(500, new { message = "Trim failed", error = res.Error });
 
 
@@ -78,6 +78,7 @@ namespace SongMelodey.Controllers
                 ClipLengthMs = (int)res.ClipLengthMs,
                 FilePath = res.FilePath
             };
+
             _db.TrimClips.Add(clip);
             await _db.SaveChangesAsync(ct);
 
