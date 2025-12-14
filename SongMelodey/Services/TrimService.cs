@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using SongMelodey.Models;
 using System.Diagnostics;
-
+using SongMelodey.Results;
 namespace SongMelodey.Services
 {
     public class TrimService : ITrimService
@@ -73,45 +73,6 @@ namespace SongMelodey.Services
             }
         }
 
-        public async Task<TrimResult> SaveUploadedClipAsync(IFormFile file, CancellationToken ct)
-        {
-            try
-            {
-                var root = _env.WebRootPath ?? "wwwroot";
-                var clipDir = Path.Combine(root, "clips");
-                Directory.CreateDirectory(clipDir);
-
-                // Sanitize filename
-                var safeFileName = Path.GetFileNameWithoutExtension(file.FileName)
-                    .Replace(" ", "_")
-                    .Replace("(", "")
-                    .Replace(")", "");
-                var extension = Path.GetExtension(file.FileName);
-                var fileName = $"upload_{Guid.NewGuid()}_{safeFileName}{extension}";
-                var outputPath = Path.Combine(clipDir, fileName);
-
-                using (var stream = new FileStream(outputPath, FileMode.Create))
-                    await file.CopyToAsync(stream, ct);
-
-                var duration = await GetRealDurationAsync(outputPath);
-
-                // Return relative path for web access
-                var webPath = outputPath.Replace(root, "").Replace("\\", "/");
-                if (!webPath.StartsWith("/"))
-                    webPath = "/" + webPath;
-
-                return new TrimResult
-                {
-                    Success = true,
-                    FilePath = webPath,
-                    ClipLengthMs = duration
-                };
-            }
-            catch (Exception ex)
-            {
-                return new TrimResult { Success = false, Error = $"Upload failed: {ex.Message}" };
-            }
-        }
 
         public async Task<string> TrimAudioAsync(string inputPath, string outputPath, int startMs, int endMs)
         {
@@ -168,11 +129,4 @@ namespace SongMelodey.Services
         }
     }
 
-    public class TrimResult
-    {
-        public bool Success { get; set; }
-        public string? Error { get; set; }
-        public string? FilePath { get; set; }
-        public int ClipLengthMs { get; set; }
-    }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SongMelodey.Dto;
 using SongMelodey.Models;
 using SongMelodey.Services;
 
@@ -62,32 +63,32 @@ namespace SongMelodey.Controllers
         /// <summary>
         /// Upload a client trimmed clip file directly (optional)
         /// </summary>
-        [HttpPost("upload-clip")]
-        public async Task<IActionResult> UploadClip([FromForm] UploadTrimClipDto dto, CancellationToken ct)
-        {
-            if (dto?.File == null) return BadRequest("File required.");
-            var res = await _trimService.SaveUploadedClipAsync(dto.File, ct);
-            if (!res.Success) return StatusCode(500, new { message = "Save failed", error = res.Error });
+      //  [HttpPost("upload-clip")]
+        //public async Task<IActionResult> UploadClip([FromForm] UploadTrimClipDto dto, CancellationToken ct)
+        //{
+        //    if (dto?.File == null) return BadRequest("File required.");
+        //    var res = await _trimService.SaveUploadedClipAsync(dto.File, ct);
+        //    if (!res.Success) return StatusCode(500, new { message = "Save failed", error = res.Error });
 
-            // optional: create a DB trim clip record without SongId (or require SongId)
-            var clip = new TrimClip
-            {
-                SongId = 0, // or require SongId in form
-                StartMs = 0,
-                EndMs = 0,
-                ClipLengthMs = (int)res.ClipLengthMs,
-                FilePath = res.FilePath
-            };
+        //    // optional: create a DB trim clip record without SongId (or require SongId)
+        //    var clip = new TrimClip
+        //    {
+        //        SongId = 0, // or require SongId in form
+        //        StartMs = 0,
+        //        EndMs = 0,
+        //        ClipLengthMs = (int)res.ClipLengthMs,
+        //        FilePath = res.FilePath
+        //    };
 
-            _db.TrimClips.Add(clip);
-            await _db.SaveChangesAsync(ct);
+        //    _db.TrimClips.Add(clip);
+        //    await _db.SaveChangesAsync(ct);
 
-            return Ok(new
-            {
-                clip.TrimClipId,
-                clip.FilePath
-            });
-        }
+        //    return Ok(new
+        //    {
+        //        clip.TrimClipId,
+        //        clip.FilePath
+        //    });
+        //}
 
         /// <summary>
         /// Get all trim clips for a song

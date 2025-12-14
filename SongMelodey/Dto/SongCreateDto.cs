@@ -1,4 +1,4 @@
-﻿namespace SongMelodey.Models
+﻿namespace SongMelodey.Dto
 {
     public class SongCreateDto
     {

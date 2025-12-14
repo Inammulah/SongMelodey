@@ -1,11 +1,12 @@
-﻿namespace SongMelodey.Models
+﻿namespace SongMelodey.Results
 {
-    public class TrimResult
+    public class MedleyResult
     {
         public bool Success { get; set; }
         public string FilePath { get; set; }
-        public long ClipLengthMs { get; set; }
+        public int TotalDurationMs { get; set; }
         public string Error { get; set; }
     }
+
 
 }
